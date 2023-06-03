@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] ParticleSystem explosionParticle;
+    [SerializeField] ParticleSystem dirtParticle;
     //privateは省略可能
     Rigidbody rb;
     [SerializeField] float gravityModifier;//重力値調整用
@@ -15,6 +17,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        dirtParticle.Play();//最初から再生
         rb = GetComponent<Rigidbody>();
         Physics.gravity *= gravityModifier;
         playerAnim = GetComponent<Animator>();
@@ -36,10 +39,13 @@ public class PlayerController : MonoBehaviour
     {
         //ぶつかった相手(collision)のタグがGroundなら
         if (collision.gameObject.CompareTag("Ground")) { 
+           
             isOnGround = true;//地面についている状態に変更
         }
         if (collision.gameObject.CompareTag("Obstacle"))
         {
+            explosionParticle.Play();//再生
+            dirtParticle.Stop();//砂埃のアニメは消す
             gameOver = true;//ゲームオーバーにしてみる
             playerAnim.SetBool("Death_b", true);//ここで死亡状態ｂにする。(Death_bとかいうのは本来自分で定義できる)
             //playerAnim.SetInteger("DeathType_int", 1);//integerは整数の意味。死亡タイプ？を一番目のやつにする的な。
